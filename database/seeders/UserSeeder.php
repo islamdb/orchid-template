@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         $user->roles()
             ->attach(
                 Role::query()
-                    ->where('slug', 'super-administrator')
+                    ->where('slug', 'superadmin')
                     ->first()
                     ->id
             );

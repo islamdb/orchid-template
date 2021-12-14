@@ -17,8 +17,8 @@ class RoleSeeder extends Seeder
     public function run()
     {
         $roles = [
-            'super-administrator',
-            'administrator'
+            'superadmin',
+            'admin'
         ];
 
         foreach ($roles as $key => $role) {
@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
 
             switch ($role)
             {
-                case 'super-administrator':
+                case 'superadmin':
                     $attr['permissions'] = Dashboard::getAllowAllPermission();
                     break;
             }
