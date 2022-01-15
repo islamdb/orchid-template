@@ -99,15 +99,6 @@ if (!function_exists('clean_text')) {
     }
 }
 
-if (!function_exists('nasab')) {
-    function nasab($text)
-    {
-        $text = str_replace('binti', 'bin', $text);
-
-        return array_reverse(explode('bin', $text));
-    }
-}
-
 if (!function_exists('badge')) {
     /**
      * badge html
@@ -168,89 +159,6 @@ if (!function_exists('array_to_string')) {
         $string = str_replace($splitter . last($array), $lastSplitter . last($array), $string);
 
         return $prefix . $string . $suffix;
-    }
-}
-
-if (!function_exists('livewire_routes')) {
-    function livewire_routes($basePath = '', $makeRoute = true, $param = 'zx', $optionalParam = 'zz')
-    {
-        $param = strtolower($param);
-        $optionalParam = strtolower($optionalParam);
-
-        $routes = [];
-
-        collect(File::allFiles(base_path('app/Http/Livewire/' . $basePath)))
-            ->filter(function ($file) {
-                return $file->isFile() and $file->getExtension() == 'php';
-            })
-            ->each(function ($file) use ($param, $optionalParam, $basePath, &$routes, $makeRoute) {
-                $params = [];
-                $optionalParams = [];
-
-                $path = str_replace('/', '\\', $basePath) . '\\' . $file->getRelativePathname();
-                $path = str_replace('.php', '', $path);
-                $path = str_replace('/', '\\', $path);
-                $path = collect(explode('\\', $path))
-                    ->map(function ($p) {
-                        return Str::snake($p, '-');
-                    })
-                    ->join('.');
-
-                $uri = collect(explode('\\', str_replace('/', '\\', $file->getRelativePath())))
-                    ->map(function ($path) use ($param, $optionalParam, &$params, &$optionalParams) {
-                        $path = Str::snake($path);
-
-                        $exploded = explode('_', $path, 2);
-                        $checkParam = strtolower($exploded[0]);
-
-                        if ($checkParam == $param) {
-                            $path = '{' . $exploded[1] . '}';
-                            $params[] = $exploded[1];
-                        } elseif ($checkParam == $optionalParam) {
-                            $path = '{' . $exploded[1] . '?}';
-                            $optionalParams[] = $exploded[1];
-                        }
-
-                        return str_replace('_', '-', $path);
-                    })
-                    ->join('/');
-                $uri = Str::endsWith($path, 'index')
-                    ? $uri
-                    : $uri . '/' . Str::of($path)
-                        ->explode('.')
-                        ->last();
-                $uri = Str::of($uri)->startsWith('/')
-                    ? substr($uri, 1)
-                    : $uri;
-
-                $component = 'App\Http\Livewire\\' . $basePath . '\\' . str_replace('/', '\\', $file->getRelativePathname());
-                $component = str_replace('.php', '', $component);
-                $component = str_replace('/', '\\', $component);
-
-                $name = str_replace('/', '.', $uri);
-                $name = str_replace('{', '', $name);
-                $name = str_replace('}', '', $name);
-                $name = str_replace('?', '', $name);
-                $name = empty($name)
-                    ? 'home'
-                    : $name;
-
-                $routes[] = [
-                    'uri' => $uri,
-                    'component' => $component,
-                    'path' => $path,
-                    'name' => $name,
-                    'params' => $params,
-                    'optional_params' => $optionalParams,
-                    'filepath' => $file->getRelativePathName()
-                ];
-
-                if ($makeRoute)
-                    Route::get($uri, $component)
-                        ->name($name);
-            });
-
-        return $routes;
     }
 }
 

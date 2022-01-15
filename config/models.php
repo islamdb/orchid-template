@@ -284,7 +284,17 @@ return [
         */
 
         'except' => [
+            'attachmentable',
+            'attachments',
+            'failed_jobs',
             'migrations',
+            'notifications',
+            'password_resets',
+            'personal_access_tokens',
+            'roles',
+            'role_users',
+            'sessions',
+            'users'
         ],
 
         /*
