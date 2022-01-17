@@ -21,13 +21,15 @@
         "orchid/platform": "^10.26"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.10",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "krlove/eloquent-model-generator": "^1.3",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^5.10",
-        "phpunit/phpunit": "^9.5.10"
+        "phpunit/phpunit": "^9.5.10",
+        "reliese/laravel": "^1.1"
     },
     "autoload": {
         "psr-4": {
