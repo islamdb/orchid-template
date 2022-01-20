@@ -403,7 +403,7 @@ return [
          | that helps to avoid typos in strings when typing field names and allows to use
          | code competition with available model's field names.
          */
-        'with_property_constants' => false,
+        'with_property_constants' => true,
 
         /*
         |--------------------------------------------------------------------------
