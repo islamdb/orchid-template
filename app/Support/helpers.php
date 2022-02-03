@@ -2,9 +2,9 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 if (!function_exists('route_name')) {
     /**
@@ -301,5 +301,237 @@ if (!function_exists('method_from_doc_code')) {
             'full' => $method,
             'raw' => trim($line)
         ];
+    }
+}
+
+if (!function_exists('money')) {
+    function money($value, int $decimals = 4, bool $zeroTrail = true, string $decimalSeparator = ',', string $thousandSeparator = '.')
+    {
+        $numeric = number_format(
+            $value ?? 0,
+            $decimals,
+            $decimalSeparator,
+            $thousandSeparator
+        );
+
+        if ($zeroTrail) {
+            $numeric = rtrim($numeric, '0');
+            $numeric = rtrim($numeric, $decimalSeparator);
+        }
+
+        return $numeric;
+    }
+}
+
+if (!function_exists('dbrescue')) {
+    /**
+     * Rescue with DB transaction
+     *
+     * @param callable $callback
+     * @param null $rescue
+     * @param bool $report
+     * @return mixed
+     * @throws Throwable
+     */
+    function dbrescue(callable $callback, $rescue = null, $report = true)
+    {
+        return rescue(function () use ($callback) {
+            DB::beginTransaction();
+
+            $data = $callback();
+
+            DB::commit();
+
+            return $data;
+        }, function (Throwable $e) use ($rescue) {
+            DB::rollBack();
+
+            return value($rescue, $e);
+        }, $report);
+    }
+}
+
+if (!function_exists('liveroutes')) {
+    function liveroutes($basePath = '', $makeRoute = true, $param = 'zx', $optionalParam = 'zz')
+    {
+        $param = strtolower($param);
+        $optionalParam = strtolower($optionalParam);
+
+        $routes = [];
+
+        collect(File::allFiles(__DIR__ . '/../Http/Livewire/' . $basePath))
+            ->filter(function ($file) {
+                return $file->isFile() and $file->getExtension() == 'php';
+            })
+            ->each(function ($file) use ($param, $optionalParam, $basePath, &$routes, $makeRoute) {
+                $params = [];
+                $optionalParams = [];
+
+                $path = str_replace('/', '\\', $basePath) . '\\' . $file->getRelativePathname();
+                $path = str_replace('.php', '', $path);
+                $path = str_replace('/', '\\', $path);
+
+                $path = collect(explode('\\', $path))
+                    ->map(function ($p) {
+                        return Str::snake($p, '-');
+                    })
+                    ->join('.');
+
+                $uri = collect(explode('\\', str_replace('/', '\\', $file->getRelativePath())))
+                    ->map(function ($path) use ($param, $optionalParam, &$params, &$optionalParams) {
+                        $path = Str::snake($path);
+
+                        $exploded = explode('_', $path, 2);
+                        $checkParam = strtolower($exploded[0]);
+
+                        if ($checkParam == $param) {
+                            $path = '{' . $exploded[1] . '}';
+                            $params[] = $exploded[1];
+                        } elseif ($checkParam == $optionalParam) {
+                            $path = '{' . $exploded[1] . '?}';
+                            $optionalParams[] = $exploded[1];
+                        }
+
+                        return str_replace('_', '-', $path);
+                    })
+                    ->join('/');
+                $uri = Str::endsWith($path, 'index')
+                    ? $uri
+                    : $uri . '/' . Str::of($path)
+                        ->explode('.')
+                        ->last();
+                $uri = Str::of($uri)->startsWith('/')
+                    ? substr($uri, 1)
+                    : $uri;
+
+                $component = 'App\Http\Livewire\\' . $basePath . '\\' . str_replace('/', '\\', $file->getRelativePathname());
+                $component = str_replace('.php', '', $component);
+                $component = str_replace('/', '\\', $component);
+
+                $name = str_replace('/', '.', $uri);
+                $name = str_replace('{', '', $name);
+                $name = str_replace('}', '', $name);
+                $name = str_replace('?', '', $name);
+                $name = empty($name)
+                    ? 'home'
+                    : $name;
+
+                $routes[] = [
+                    'uri' => $uri,
+                    'component' => $component,
+                    'path' => $path,
+                    'name' => $name,
+                    'params' => $params,
+                    'optional_params' => $optionalParams,
+                    'filepath' => $file->getRelativePathName()
+                ];
+
+                if ($makeRoute)
+                    Route::get($uri, $component)
+                        ->name($name);
+            });
+
+        return $routes;
+    }
+}
+
+if (!function_exists('screenroutes')) {
+    function screenroutes($basePath = '', $makeRoute = true, $prefixRouteName = '', $param = 'zx', $optionalParam = 'zz')
+    {
+        $param = strtolower($param);
+        $optionalParam = strtolower($optionalParam);
+
+        $routes = [];
+
+        collect(File::allFiles(__DIR__ . '/../Orchid/Screens/' . $basePath))
+            ->filter(function ($file) {
+                return $file->isFile() and $file->getExtension() == 'php';
+            })
+            ->each(function ($file) use ($param, $optionalParam, $basePath, &$routes, $makeRoute, $prefixRouteName) {
+                $params = [];
+                $optionalParams = [];
+
+                $path = str_replace('/', '\\', $basePath) . '\\' . $file->getRelativePathname();
+                $path = str_replace('.php', '', $path);
+                $path = str_replace('/', '\\', $path);
+
+                $path = collect(explode('\\', $path))
+                    ->map(function ($p) {
+                        return Str::snake($p, '-');
+                    })
+                    ->join('.');
+
+                $uri = collect(explode('\\', str_replace('/', '\\', $file->getRelativePath())))
+                    ->map(function ($path) use ($param, $optionalParam, &$params, &$optionalParams) {
+                        $path = Str::snake($path);
+
+                        $exploded = explode('_', $path, 2);
+                        $checkParam = strtolower($exploded[0]);
+
+                        if ($checkParam == $param) {
+                            $path = '{' . $exploded[1] . '}';
+                            $params[] = $exploded[1];
+                        } elseif ($checkParam == $optionalParam) {
+                            $path = '{' . $exploded[1] . '?}';
+                            $optionalParams[] = $exploded[1];
+                        }
+
+                        return str_replace('_', '-', $path);
+                    })
+                    ->join('/');
+                $uri = Str::endsWith($path, 'index-screen')
+                    ? $uri
+                    : $uri . '/' . Str::of($path)
+                        ->explode('.')
+                        ->last();
+                $uri = Str::of($uri)->startsWith('/')
+                    ? substr($uri, 1)
+                    : $uri;
+                $uri = str_replace('-screen', '', $uri);
+
+                $component = 'App\Orchid\Screens\\' . $basePath . '\\' . str_replace('/', '\\', $file->getRelativePathname());
+                $component = str_replace('.php', '', $component);
+                $component = str_replace('/', '\\', $component);
+
+                $name = str_replace('/', '.', $uri);
+                $name = str_replace('{', '', $name);
+                $name = str_replace('}', '', $name);
+                $name = str_replace('?', '', $name);
+                $name = empty($name)
+                    ? 'home'
+                    : $name;
+
+                $title = (string)Str::of($uri)
+                    ->replace('-', ' ')
+                    ->replace('/', ' / ')
+                    ->title();
+
+                $permission = str_replace('.index-screen', '', $path);
+                $permission = str_replace('-screen', '', $permission);
+
+                $routes[] = [
+                    'uri' => $uri,
+                    'component' => $component,
+                    'path' => $path,
+                    'permission' => $permission,
+                    'name' => $name,
+                    'params' => $params,
+                    'optional_params' => $optionalParams,
+                    'filepath' => $file->getRelativePathName(),
+                    'title' => $title
+                ];
+
+                if ($makeRoute) {
+                    Route::screen($uri, $component)
+                        ->name($name)
+                        ->breadcrumbs(function (Tabuna\Breadcrumbs\Trail $trail) use ($uri, $title, $name, $prefixRouteName) {
+                            return $trail
+                                ->parent('platform.index')
+                                ->push($title, route($prefixRouteName.$name));
+                        });
+                }
+            });
+
+        return $routes;
     }
 }
