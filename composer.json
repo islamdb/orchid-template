@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0",
         "ext-intl": "*",
         "alexsabur/orchid-livewire": "^3.0",
         "fruitcake/laravel-cors": "^2.0",
