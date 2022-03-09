@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "969110f80833b2ec2582687389812b2e",
+    "content-hash": "425142b73ced0de7bbeca9ac9efc5cf4",
     "packages": [
         {
             "name": "alexsabur/orchid-livewire",
@@ -10198,7 +10198,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0",
         "ext-intl": "*"
     },
     "platform-dev": [],
