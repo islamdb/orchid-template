@@ -1,7 +1,7 @@
 <div class="mb-3">
 
     <label class="form-label">
-        {{ __('Username').'/'.__('Email address')}}
+        {{__('Email/Username address')}}
     </label>
 
     {!!  \Orchid\Screen\Fields\Input::make('email')
@@ -9,7 +9,7 @@
         ->required()
         ->tabindex(1)
         ->autofocus()
-        ->placeholder(__('Enter your email').'/'.__('username'))
+        ->placeholder(__('Enter your email or username'))
     !!}
 </div>
 

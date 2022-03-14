@@ -30,15 +30,16 @@ class PlatformProvider extends OrchidServiceProvider
         $withExampleMenu = false;
 
         $menu = [
-            Menu::make('Dasbor')
+            Menu::make()->title(__('Main')),
+            Menu::make(__('Dasboard'))
                 ->icon('monitor')
-                ->route('platform.main')
-                ->title('Main'),
+                ->route('platform.main'),
+
+            Menu::make()->title(__('Access rights')),
             Menu::make(__('Users'))
                 ->icon('user')
                 ->route('platform.systems.users')
-                ->permission('platform.systems.users')
-                ->title(__('Tools')),
+                ->permission('platform.systems.users'),
             Menu::make(__('Roles'))
                 ->icon('lock')
                 ->route('platform.systems.roles')

@@ -2,7 +2,7 @@
 
 @section('body-left')
 
-    <div class="aside col-xs-12 col-md-2 @if(config('platform.sidebar.color') == 'white') bg-white @else bg-dark @endif">
+    <div class="aside col-xs-12 col-md-2 @if(config('platform.sidebar.color', 'white') == 'white') bg-white @else bg-dark @endif">
         <div class="d-md-flex align-items-start flex-column d-sm-block h-full">
 
             <header class="d-sm-flex d-md-block p-3 mt-md-4 w-100 d-flex align-items-center">
@@ -25,7 +25,7 @@
 
                 @includeWhen(Auth::check(), 'platform::partials.profile')
 
-                <ul class="nav flex-column mb-1">
+                <ul class="nav flex-column mb-1 ps-0">
                     {!! Dashboard::renderMenu(\Orchid\Platform\Dashboard::MENU_MAIN) !!}
                 </ul>
 

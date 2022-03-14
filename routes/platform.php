@@ -70,7 +70,7 @@ Route::screen('users', UserListScreen::class)
     });
 
 // Platform > System > Roles > Role
-Route::screen('roles/{roles}/edit', RoleEditScreen::class)
+Route::screen('roles/{role}/edit', RoleEditScreen::class)
     ->name('platform.systems.roles.edit')
     ->breadcrumbs(function (Trail $trail, $role) {
         return $trail
@@ -112,4 +112,4 @@ Route::screen('example-editors', ExampleTextEditorsScreen::class)->name('platfor
 Route::screen('example-cards', ExampleCardsScreen::class)->name('platform.example.cards');
 Route::screen('example-advanced', ExampleFieldsAdvancedScreen::class)->name('platform.example.advanced');
 
-//Route::screen('idea', 'Idea::class','platform.screens.idea');
+//Route::screen('idea', Idea::class, 'platform.screens.idea');

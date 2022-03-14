@@ -35,27 +35,13 @@ class UserListLayout extends Table
                     return new Persona($user->presenter());
                 }),
 
-            TD::make('username', __('Username'))
-                ->sort()
-                ->cantHide()
-                ->filter(Input::make())
-                ->render(function (User $user) {
-                    return ModalToggle::make($user->username)
-                        ->modal('oneAsyncModal')
-                        ->modalTitle($user->presenter()->title())
-                        ->method('saveUser')
-                        ->asyncParameters([
-                            'user' => $user->id,
-                        ]);
-                }),
-
             TD::make('email', __('Email'))
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
                 ->render(function (User $user) {
                     return ModalToggle::make($user->email)
-                        ->modal('oneAsyncModal')
+                        ->modal('asyncEditUserModal')
                         ->modalTitle($user->presenter()->title())
                         ->method('saveUser')
                         ->asyncParameters([

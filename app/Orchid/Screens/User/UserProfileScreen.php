@@ -23,27 +23,13 @@ class UserProfileScreen extends Screen
     use TwoFactorScreenAuthenticatable;
 
     /**
-     * Display header name.
-     *
-     * @var string
-     */
-    public $name = 'My account';
-
-    /**
-     * Display header description.
-     *
-     * @var string
-     */
-    public $description = 'Update your account details such as name, email address and password';
-
-    /**
      * Query data.
      *
      * @param Request $request
      *
      * @return array
      */
-    public function query(Request $request): array
+    public function query(Request $request): iterable
     {
         return [
             'user' => $request->user(),
@@ -51,11 +37,31 @@ class UserProfileScreen extends Screen
     }
 
     /**
+     * Display header name.
+     *
+     * @return string|null
+     */
+    public function name(): ?string
+    {
+        return 'My account';
+    }
+
+    /**
+     * Display header description.
+     *
+     * @return string|null
+     */
+    public function description(): ?string
+    {
+        return 'Update your account details such as name, email address and password';
+    }
+
+    /**
      * Button commands.
      *
      * @return Action[]
      */
-    public function commandBar(): array
+    public function commandBar(): iterable
     {
         return [
             $this->twoFactorCommandBar()
@@ -65,11 +71,9 @@ class UserProfileScreen extends Screen
     /**
      * @return \Orchid\Screen\Layout[]
      */
-    public function layout(): array
+    public function layout(): iterable
     {
         return [
-            $this->twoFactorLayout(),
-
             Layout::block(UserEditLayout::class)
                 ->title(__('Profile Information'))
                 ->description(__("Update your account's profile information and email address."))
@@ -89,6 +93,8 @@ class UserProfileScreen extends Screen
                         ->icon('check')
                         ->method('changePassword')
                 ),
+
+            $this->twoFactorLayout()
         ];
     }
 
@@ -105,24 +111,6 @@ class UserProfileScreen extends Screen
             ],
         ]);
 
-        if (!empty($attachmentId = $request->get('user')['avatar'])) {
-            $request->user()
-                ->attachment()
-                ->where('attachments.id', '!=', $attachmentId)
-                ->get()
-                ->each
-                ->delete();
-
-            $request->user()
-                ->attachment()
-                ->sync(
-                    $attachmentId
-                );
-        }
-
-        $data = $request->get('user');
-        unset($data['avatar']);
-
         $request->user()
             ->fill($request->get('user'))
             ->save();
@@ -135,8 +123,9 @@ class UserProfileScreen extends Screen
      */
     public function changePassword(Request $request): void
     {
+        $guard = config('platform.guard', 'web');
         $request->validate([
-            'old_password' => 'required|password:web',
+            'old_password' => 'required|current_password:'.$guard,
             'password'     => 'required|confirmed',
         ]);
 

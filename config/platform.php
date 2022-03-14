@@ -1,21 +1,7 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Sidebar
-    |--------------------------------------------------------------------------
-    |
-    | Config sidebar
-    | - color : white or dark
-    | - active : rounded or null
-    |
-    */
-    'sidebar' => [
-        'color' => 'white',
-        'active' => 'rounded'
-    ],
+    'view_direction' => 'rtl',
 
     /*
     |--------------------------------------------------------------------------
@@ -171,7 +157,9 @@ return [
     | Example: [ 'fa' => storage_path('app/fontawesome') ]
     */
 
-    'icons' => [],
+    'icons' => [
+        'orc' => \Orchid\IconPack\Path::getFolder(),
+    ],
 
     /*
     |--------------------------------------------------------------------------
