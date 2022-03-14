@@ -43,7 +43,7 @@ class UserProfileScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'My account';
+        return __('My account');
     }
 
     /**
@@ -53,7 +53,7 @@ class UserProfileScreen extends Screen
      */
     public function description(): ?string
     {
-        return 'Update your account details such as name, email address and password';
+        return __('Update your account details such as name, username, email address and password');
     }
 
     /**
@@ -110,6 +110,24 @@ class UserProfileScreen extends Screen
                 Rule::unique(User::class, 'email')->ignore($request->user()),
             ],
         ]);
+
+        if (!empty($attachmentId = $request->get('user')['avatar'])) {
+            $request->user()
+                ->attachment()
+                ->where('attachments.id', '!=', $attachmentId)
+                ->get()
+                ->each
+                ->delete();
+
+            $request->user()
+                ->attachment()
+                ->sync(
+                    $attachmentId
+                );
+        }
+
+        $data = $request->get('user');
+        unset($data['avatar']);
 
         $request->user()
             ->fill($request->get('user'))
