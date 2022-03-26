@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "alexsabur/orchid-livewire": "5.0",
         "guzzlehttp/guzzle": "^7.2",
+        "islamdb/orchid-helper": "dev-master",
         "islamdb/orchid-setting": "^2.0",
         "laravel/fortify": "^1.11",
         "laravel/framework": "^9.2",
@@ -15,7 +16,8 @@
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.10",
         "orchid/fortify": "^0.0.8",
-        "orchid/platform": "^12.2"
+        "orchid/platform": "^12.2",
+        "rap2hpoutre/fast-excel": "^3.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
@@ -32,7 +34,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
