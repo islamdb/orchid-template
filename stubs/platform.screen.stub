@@ -1,0 +1,77 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Models\DummyModel;
+use IslamDB\OrchidHelper\Screens\ResourceScreen;
+
+class DummyClass extends ResourceScreen
+{
+    /**
+     * Display header name.
+     *
+     * @var string
+     */
+    public $name = 'DummyModel';
+
+    public $description = 'Manage all of your DummyModels';
+
+    public $files = [
+        'image'
+    ];
+
+    public function model()
+    {
+        return DummyModel::query();
+    }
+
+    public function columns()
+    {
+        return [];
+    }
+
+    public function views()
+    {
+        return [];
+    }
+
+    public function fields()
+    {
+        return [];
+    }
+
+    public function actions($model)
+    {
+        $actions = parent::actions($model);
+        return $actions;
+    }
+
+    public function onCreate()
+    {
+        $data = request()->data;
+        $model = $this->model()->create($data);
+        return $model;
+    }
+
+    public function onUpdate()
+    {
+        $data = request()->data;
+        $model = $this->model()
+            ->where($this->key, request()->key)
+            ->first();
+
+        foreach ($data as $key => $value) {
+            $model->$key = $value;
+        }
+        $model->save();
+        return $model;
+    }
+
+    public function onDelete()
+    {
+        $model = $this->model()
+            ->where($this->key, request()->key)
+            ->first();
+        $model->delete();
+    }
+}
