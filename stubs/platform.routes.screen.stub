@@ -1,0 +1,8 @@
+
+Route::screen('DummyUrlName', DummyNamespace\DummyClass)
+    ->name('platform.DummyName')
+    ->breadcrumbs(function (Trail $trail) {
+        return $trail
+            ->parent('platform.index')
+            ->push('DummyBreadcrumbsName');
+    });

@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Orchid\Screen\Field;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,5 +47,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Schema::defaultStringLength(191);
+
+        Field::macro('addAttribute', function ($name, $value) {
+            $this->inlineAttributes[] = $name;
+
+            $this->attributes[$name] = $value;
+
+            return $this;
+        });
     }
 }
